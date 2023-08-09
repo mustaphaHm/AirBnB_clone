@@ -10,9 +10,10 @@ Do you remember the Shell? It’s exactly the same but limited to a specific use
    - Update attributes of an object
    - Destroy an object
 ## How to start a command line interpreter :
-python3 filename.py
+python3 filename.py  
 (Cmd)
 ## Simple Example :
+```python
 import cmd
 
 
@@ -27,6 +28,7 @@ class HelloWorld(cmd.Cmd):
 
 if __name__ == '__main__':
     HelloWorld().cmdloop()
+```
 ## How to use It :
-(Cmd) greet
+(Cmd) greet  
 hello
