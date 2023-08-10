@@ -5,11 +5,20 @@ from datetime import datetime
 
 class BaseModel:
     """Definition of class BaseModel"""
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Default Constructor"""
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        date_format = '%Y-%m-%dT%H:%M:%S.%f'
+        if kwargs is not None:
+            kwargs.pop("__class__", None)
+            for key, value in kwargs.items():
+                if key == "created_at" or key == "updated_at":
+                    setattr(self, key, datetime.strptime(value, date_format))
+                else:
+                    setattr(self, key, value)
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def __str__(self):
         """Overiding the str Method to print a specific format"""
@@ -25,8 +34,8 @@ class BaseModel:
     def to_dict(self):
         """returns a dictionary containing all keys/values
         of __dict__ of the instance"""
-        self.created_at = self.created_at.isoformat()
-        self.updated_at = self.updated_at.isoformat()
         new_dict = self.__dict__.copy()
         new_dict["__class__"] = self.__class__.__name__
+        new_dict["created_at"] = self.created_at.isoformat()
+        new_dict["updated_at"] = self.updated_at.isoformat()
         return new_dict
