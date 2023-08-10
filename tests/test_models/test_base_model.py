@@ -11,8 +11,10 @@ class TestBaseModel(unittest.TestCase):
         """Test if Id is Valid UUID"""
         self.assertTrue(instance.id)
         self.assertIsInstance(instance.id, str)
-        self.assertRegex(instance.id, r'^[0-9a-f]{8}-[0-9a-f]{4}\
-                -[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')
+        self.assertRegex(instance.id,
+                         r'^[0-9a-f]{8}-[0-9a-f]{4}-'
+                         r'[4][0-9a-f]{3}-[89ab][0-9a-f]{3}-'
+                         r'[0-9a-f]{12}$')
         """Test if created_at and updated_at are instances of datetime"""
         self.assertIsInstance(instance.created_at, datetime)
         self.assertIsInstance(instance.updated_at, datetime)
