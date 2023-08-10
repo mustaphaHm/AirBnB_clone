@@ -8,6 +8,9 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """Default Constructor"""
         date_format = '%Y-%m-%dT%H:%M:%S.%f'
+        self.id = str(uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
         if kwargs is not None:
             kwargs.pop("__class__", None)
             for key, value in kwargs.items():
@@ -15,10 +18,6 @@ class BaseModel:
                     setattr(self, key, datetime.strptime(value, date_format))
                 else:
                     setattr(self, key, value)
-        else:
-            self.id = str(uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
 
     def __str__(self):
         """Overiding the str Method to print a specific format"""
