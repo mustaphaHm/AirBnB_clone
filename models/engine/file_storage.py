@@ -1,5 +1,5 @@
+#!user/bin/python3
 """File storgae module."""
-# !user/bin/python3
 import json
 from models.base_model import BaseModel
 

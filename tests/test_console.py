@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """Test console module."""
 import unittest
 from unittest.mock import patch
