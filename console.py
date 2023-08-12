@@ -104,7 +104,12 @@ class HBNBCommand(cmd.Cmd):
         if len(args) < 4:
             print("** value missing **")
             return
-        attr_value = args[3]
+        attr_value = ' '.join(args[3:])
+
+        # Remove surrounding double quotes from attribute value
+        if attr_value.startswith('"') and attr_value.endswith('"'):
+            attr_value = attr_value[1:-1]
+
         obj_dict = models.storage.all()
         instance = obj_dict[key]
         if hasattr(instance, attr_name):
