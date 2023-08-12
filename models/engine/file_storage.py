@@ -1,7 +1,12 @@
 #!user/bin/python3
-"""File storgae module."""
+"""Module filestorage."""
 import json
+from models.amenity import Amenity
 from models.base_model import BaseModel
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
 from models.user import User
 
 
@@ -42,6 +47,26 @@ class FileStorage:
                         FileStorage.__objects[key] = obj
                     elif class_name == 'User':
                         cls = User
+                        obj = cls(**value)
+                        FileStorage.__objects[key] = obj
+                    elif class_name == 'State':
+                        cls = State
+                        obj = cls(**value)
+                        FileStorage.__objects[key] = obj
+                    elif class_name == 'City':
+                        cls = City
+                        obj = cls(**value)
+                        FileStorage.__objects[key] = obj
+                    elif class_name == 'Amenity':
+                        cls = Amenity
+                        obj = cls(**value)
+                        FileStorage.__objects[key] = obj
+                    elif class_name == 'Place':
+                        cls = Place
+                        obj = cls(**value)
+                        FileStorage.__objects[key] = obj
+                    elif class_name == 'Review':
+                        cls = Review
                         obj = cls(**value)
                         FileStorage.__objects[key] = obj
                     else:
