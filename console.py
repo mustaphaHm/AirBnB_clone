@@ -1,5 +1,5 @@
-"""this is console module."""
-# !/usr/bin/python3
+#!/usr/bin/python3
+"""This is console mudole."""
 import cmd
 
 
