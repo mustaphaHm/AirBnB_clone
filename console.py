@@ -109,6 +109,10 @@ class HBNBCommand(cmd.Cmd):
         # Remove surrounding double quotes from attribute value
         if attr_value.startswith('"') and attr_value.endswith('"'):
             attr_value = attr_value[1:-1]
+        elif attr_value.startswith('[') and attr_value.endswith(']'):
+            attr_value = attr_value[1:-1]
+        elif attr_value.startswith('{') and attr_value.endswith('}'):
+            attr_value = attr_value[1:-1]
 
         obj_dict = models.storage.all()
         instance = obj_dict[key]
