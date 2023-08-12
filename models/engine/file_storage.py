@@ -2,6 +2,7 @@
 """File storgae module."""
 import json
 from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage:
@@ -37,6 +38,10 @@ class FileStorage:
                     class_name = value['__class__']
                     cls = BaseModel
                     if class_name == 'BaseModel':
+                        obj = cls(**value)
+                        FileStorage.__objects[key] = obj
+                    elif class_name == 'User':
+                        cls = User
                         obj = cls(**value)
                         FileStorage.__objects[key] = obj
                     else:
