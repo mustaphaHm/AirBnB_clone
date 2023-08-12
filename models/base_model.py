@@ -1,12 +1,15 @@
-#!/usr/bin/python3
+"""Base module."""
+# !/usr/bin/python3
 from datetime import datetime
 from uuid import uuid4
 import models
 
 
 class BaseModel:
-    """Definition of class BaseModel"""
+    """Definition of class BaseModel."""
+
     def __init__(self, *args, **kwargs):
+        """Const declaration."""
         format = '%Y-%m-%dT%H:%M:%S.%f'
         self.id = str(uuid4())
         self.created_at = datetime.now()
@@ -22,17 +25,17 @@ class BaseModel:
             models.storage.new(self)
 
     def __str__(self):
-        """Print human readble str of an object"""
+        """Print human readble str of an object."""
         cls_name = self.__class__.__name__
         return "[{}] ({}) {}".format(cls_name, self.id, self.__dict__)
-    """Public instance methods"""
+    """Public instance methods."""
     def save(self):
-        """Update the attribute updated_at"""
+        """Update the attribute updated_at."""
         self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
-        """Return dictionary representation of an object"""
+        """Return dictionary representation of an object."""
         new_dict = self.__dict__.copy()
         new_dict['created_at'] = self.created_at.isoformat()
         new_dict['updated_at'] = self.updated_at.isoformat()
