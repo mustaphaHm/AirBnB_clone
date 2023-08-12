@@ -95,6 +95,8 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """Update an instance based on the class name and id."""
         class_name, key = self.validate_class_and_id(line)
+        if class_name is None or key is None:
+            return
         if class_name and key:
             args = line.split()
         if len(args) < 3:
