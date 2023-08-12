@@ -107,13 +107,12 @@ class HBNBCommand(cmd.Cmd):
         attr_value = args[3]
         obj_dict = models.storage.all()
         instance = obj_dict[key]
-        try:
-            # Try to cast the attribute value to the attribute type
-            attr_type = type(getattr(instance, attr_name))
-            setattr(instance, attr_name, attr_type(attr_value))
+        if hasattr(instance, attr_name):
+            setattr(instance, attr_name, attr_value)
             instance.save()
-        except (ValueError, TypeError):
-            pass
+        else:
+            setattr(instance, attr_name, attr_value)
+            instance.save()
 
 
 if __name__ == '__main__':
