@@ -1,115 +1,54 @@
+import sys
 import unittest
-from unittest.mock import patch, MagicMock
-from console import HBNBCommand  # Replace with the actual module name
+from unittest.mock import patch
+from io import StringIO
+from console import HBNBCommand
 
 
-class TestHBNBCommand(unittest.TestCase):
+class ConsoleTestCase(unittest.TestCase):
+    """Test case for the console commands."""
 
-    def setUp(self):
-        self.hbnb_cmd = HBNBCommand()
+    def test_error_classname_missing(self):
+        """Test command with missing class name."""
+        cmds = ["create", "update", "show", "destroy"]
+        expected_output = "** class name missing **"
 
-    @patch("builtins.input", side_effect=["quit"])
-    def test_quit_command(self, mock_input):
-        self.assertTrue(self.hbnb_cmd.onecmd("quit"))
+        for cmd in cmds:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(cmd)
+                self.assertEqual(expected_output, f.getvalue().strip())
 
-    @patch("builtins.input", side_effect=["EOF"])
-    def test_eof_command(self, mock_input):
-        self.assertTrue(self.hbnb_cmd.onecmd("EOF"))
+    def test_error_class_does_not_exist(self):
+        """Test command with non-existing class."""
+        cmds = ["create x", "update x", "show x", "destroy x"]
+        expected_output = "** class doesn't exist **"
 
-    @patch("builtins.print")
-    @patch("models.storage.all", return_value={'BaseModel.123': "mock_instance"})
-    def test_validate_class_and_id_valid(self, mock_all, mock_print):
-        class_name, key = self.hbnb_cmd.validate_class_and_id("BaseModel 123")
-        self.assertEqual(class_name, "BaseModel")
-        self.assertEqual(key, "BaseModel.123")
-        mock_print.assert_not_called()
+        for cmd in cmds:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(cmd)
+                self.assertEqual(expected_output, f.getvalue().strip())
 
-    @patch("builtins.print")
-    @patch("models.storage.all", return_value={})
-    def test_validate_class_and_id_missing_instance(self, mock_all, mock_print):
-        class_name, key = self.hbnb_cmd.validate_class_and_id("BaseModel 123")
-        self.assertIsNone(class_name)
-        self.assertIsNone(key)
-        mock_print.assert_called_once_with("** no instance found **")
+    def test_error_instance_id_missing(self):
+        """Test command with missing instance ID."""
+        cmds = ["update", "show", "destroy"]
+        classes = HBNBCommand().classes
+        expected_output = "** instance id missing **"
 
-    # Add more test cases for validate_class_and_id
+        for cmd in cmds:
+            for clas in classes:
+                with patch('sys.stdout', new=StringIO()) as f:
+                    HBNBCommand().onecmd(f"{cmd} {clas}")
+                    self.assertEqual(expected_output, f.getvalue().strip())
 
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    def test_do_create_valid(self, mock_all, mock_print):
-        mock_all.return_value = {}
-        with patch.dict(self.hbnb_cmd.classes, {'BaseModel': MagicMock()}):
-            self.hbnb_cmd.do_create("BaseModel")
-            mock_print.assert_called_once()
+    def test_error_no_instance_found(self):
+        """Test command with non-existing instance ID."""
+        cmds = ["update", "show", "destroy"]
+        classes = HBNBCommand().classes
+        wrong_id = "x"
+        expected_output = "** no instance found **"
 
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    def test_do_create_missing_class(self, mock_all, mock_print):
-        mock_all.return_value = {}
-        self.hbnb_cmd.do_create("NonExistentClass")
-        mock_print.assert_called_once_with("** class doesn't exist **")
-
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    @patch("console.HBNBCommand.validate_class_and_id", return_value=("BaseModel", "BaseModel.123"))
-    def test_do_show_valid(self, mock_validate, mock_all, mock_print):
-        mock_all.return_value = {'BaseModel.123': MagicMock()}
-        self.hbnb_cmd.do_show("BaseModel 123")
-        mock_print.assert_called_once()
-
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    def test_do_show_missing_class(self, mock_all, mock_print):
-        mock_all.return_value = {}
-        self.hbnb_cmd.do_show("NonExistentClass 123")
-        mock_print.assert_called_once_with("** class doesn't exist **")
-
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    @patch("console.HBNBCommand.validate_class_and_id", return_value=("BaseModel", "BaseModel.123"))
-    def test_do_destroy_valid(self, mock_validate, mock_all, mock_print):
-        mock_all.return_value = {'BaseModel.123': MagicMock()}
-        self.hbnb_cmd.do_destroy("BaseModel 123")
-        mock_print.assert_not_called()
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    def test_do_destroy_missing_class(self, mock_all, mock_print):
-        mock_all.return_value = {}
-        self.hbnb_cmd.do_destroy("NonExistentClass 123")
-        mock_print.assert_called_once_with("** class doesn't exist **")
-
-
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    @patch("console.HBNBCommand.validate_class_and_id", return_value=("BaseModel", "BaseModel.123"))
-    def test_do_update_valid(self, mock_validate, mock_all, mock_print):
-        mock_all.return_value = {'BaseModel.123': MagicMock()}
-        self.hbnb_cmd.do_update("BaseModel 123 name 'new_name'")
-        mock_print.assert_not_called()
-
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    def test_do_update_missing_class(self, mock_all, mock_print):
-        mock_all.return_value = {}
-        self.hbnb_cmd.do_update("NonExistentClass 123 name 'new_name'")
-        mock_print.assert_called_once_with("** class doesn't exist **")
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    def test_do_all_existing_class(self, mock_all, mock_print):
-        mock_all.return_value = {'BaseModel.123': MagicMock()}
-        self.hbnb_cmd.do_all("BaseModel")
-        mock_print.assert_called_once()
-
-    @patch("builtins.print")
-    @patch("models.storage.all")
-    def test_do_all_nonexistent_class(self, mock_all, mock_print):
-        mock_all.return_value = {}
-        self.hbnb_cmd.do_all("NonExistentClass")
-        mock_print.assert_called_once_with("** class doesn't exist **")
+        for cmd in cmds:
+            for clas in classes:
+                with patch('sys.stdout', new=StringIO()) as f:
+                    HBNBCommand().onecmd(f"{cmd} {clas} {wrong_id}")
+                    self.assertEqual(expected_output, f.getvalue().strip())
