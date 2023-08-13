@@ -1,14 +1,16 @@
-#!/usr/bin/python3
-"""Tests Base Model"""
-
+#!user/bin/python3
 import unittest
-"""import pep8
-from models.base_model import BaseModel"""
+from tests.test_models.test_base_model import TestBaseModel
+from models.user import User
 
 
-class TestsBase(unittest.TestCase):
-    """Class to test the Base cases"""
+class TestPlace(TestBaseModel):
+    def setUp(self):
+        self.model = User()
 
-    def test_any(self):
-        """Test"""
-        pass
+    def tearDown(self):
+        del self.model
+
+
+if __name__ == "__main__":
+    unittest.main()
