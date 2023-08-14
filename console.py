@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """This is console module."""
 import cmd
+import re
 import models
 from models.amenity import Amenity
 from models.base_model import BaseModel
@@ -26,16 +27,44 @@ class HBNBCommand(cmd.Cmd):
     }
 
     def do_quit(self, line):
-        """Quit command to exit the program."""
+        """Quit to exit the program."""
         return True
 
     def do_EOF(self, line):
-        """EOF signal to exit the program."""
+        """EOF to exit the program."""
         return True
 
     def emptyline(self):
         """Do nothing when it's an empty line."""
         pass
+
+    def default(self, line):
+        """Hundle when user type <class name>.<method name>()."""
+        commands = {
+            "create": self.do_create,
+            "show": self.do_show,
+            "all": self.do_all,
+            "destroy": self.do_destroy,
+            "update": self.do_update,
+            "count": self.do_count,
+        }
+
+        split_parts = re.split(r'(\(|\)|\s|\.|\,)', line)
+        split_parts = [part for part in split_parts if part.strip() != '']
+
+        if len(split_parts) >= 3:
+            class_name = split_parts[0]
+            command = split_parts[2]
+
+        if class_name in HBNBCommand.classes and command in commands:
+            if len(split_parts) > 4:
+                argument = split_parts[4].strip("(')")
+                commands[command](class_name + ' ' + argument)
+            else:
+                commands[command](class_name)
+            return
+
+        print("*** Unknown syntax:", line)
 
     def validate_class_and_id(self, line):
         """Validate class name and instance ID."""
@@ -136,6 +165,18 @@ class HBNBCommand(cmd.Cmd):
         else:
             setattr(instance, attr_name, attr_value)
             instance.save()
+
+    def do_count(self, line):
+        """Retrieve the number of instances of a class."""
+        lenght = 0
+        cls_name = line.strip()
+        if cls_name not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+        for key, obj in models.storage.all().items():
+            if cls_name in key:
+                lenght += 1
+        print(lenght)
 
 
 if __name__ == '__main__':
